@@ -1,6 +1,6 @@
 {
   "name": "iwencai-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "问财 (Iwencai) MCP server — 聚合同花顺问财 25 个官方技能(行情/行业/财务/宏观/指数/基金/期货/研报/事件/经营/股东/基本资料 + 选股筛选器 + 新闻/公告/研报搜索)为一个 MCP 服务",
   "type": "module",
   "bin": {
@@ -16,7 +16,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "skills"
   ],
   "keywords": [
     "mcp",
