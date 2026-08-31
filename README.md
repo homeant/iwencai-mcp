@@ -51,7 +51,7 @@ claude mcp add iwencai \
 
 ## Skill (`iwencai`)
 
-仓库附带一个 **`iwencai` 技能**,把 Claude Code 与上面的 MCP 串起来:它不直接调 API,而是**指引调用 `iwencai` MCP 的 25 个工具**,负责意图识别、问句改写、结果解析与来源标注。安装:把 `iwencai` 目录/symlink 放到 `~/.claude/skills/`。
+仓库附带一个 **`iwencai` 技能**,把 Claude Code 与上面的 MCP 串起来:它不直接调 API,而是**指引调用 `iwencai` MCP 的 25 个工具**,负责意图识别、问句改写、结果解析与来源标注。技能就是一个独立文件 `skills/iwencai/SKILL.md`,安装时把它软链(或复制)到 `~/.claude/skills/iwencai/`:
 
 ### 意图 → 工具映射
 
