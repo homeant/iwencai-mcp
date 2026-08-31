@@ -44,19 +44,42 @@ npx iwencai-mcp
 claude mcp add iwencai \
   --env IWENCAI_API_KEY=xxx \
   --env IWENCAI_BASE_URL=https://openapi.iwencai.com \
-  -- npx -y tsx /path/to/iwencai-mcp/src/server.ts
+  -- npx -y iwencai-mcp
 ```
 
-## 发布 (npm)
+> 本地开发 / 未发布改动时,可改用 `npx -y tsx /path/to/iwencai-mcp/src/server.ts`。
 
-CI 在推送 `v*` 标签或手动触发时发布:
+## Skill (`iwencai`)
 
-```bash
-git tag v0.2.0
-git push origin v0.2.0
-```
+仓库附带一个 **`iwencai` 技能**,把 Claude Code 与上面的 MCP 串起来:它不直接调 API,而是**指引调用 `iwencai` MCP 的 25 个工具**,负责意图识别、问句改写、结果解析与来源标注。安装:把 `iwencai` 目录/symlink 放到 `~/.claude/skills/`。
 
-需要先在 GitHub 仓库设置 secret `NPM_TOKEN`(npm 访问令牌)。
+### 意图 → 工具映射
+
+| 用户问什么 | 工具 |
+|---|---|
+| 股票/ETF/指数 价格、涨跌幅、成交量、主力资金、技术指标 | `query_market_data` |
+| 行业估值、财务、盈利、板块排名 | `query_industry_data` |
+| 个股营收、净利润、ROE、负债率、现金流 | `query_finance_data` |
+| GDP、CPI、PPI、利率、汇率、社融、M2 | `query_macro_data` |
+| 指数行情(上证/沪深300/创业板/恒生/纳指) | `query_index_data` |
+| 基金业绩、持仓、风险、评级、基金经理 | `query_fund_data` |
+| 期货期权行情、波动率、产销、会员持仓、行权 | `query_futures_data` |
+| 研报评级、业绩预测、ESG、信用评级、券商金股 | `query_insresearch_data` |
+| 业绩预告、增发、质押、解禁、调研、监管函 | `query_event_data` |
+| 主营业务、主要客户/供应商、参控股公司、重大合同 | `query_business_data` |
+| 股本结构、股东户数、前十大股东、实控人 | `query_management_data` |
+| 全品类标的基础信息、发行主体、上市地/日期 | `query_basicinfo_data` |
+| 按条件筛选 A股 / ETF / 可转债 / 基金 / 基金公司 / 基金经理 / 期货期权 / 板块 / 港股 / 美股 | `select_astock` · `select_etf` · `select_cb` · `select_fund` · `select_fundcompany` · `select_fundmanager` · `select_futures` · `select_sector` · `select_hkstock` · `select_usstock` |
+| 财经新闻 / 公司公告 / 券商研报 | `search_news` · `search_announcements` · `search_reports` |
+
+### 使用流程
+
+1. **识别意图** → 查上表选工具。
+2. **改写问句**为标准金融问句(如 `同花顺今天多少钱` → `同花顺最新价格`)。
+3. **调用工具**,传 `{query, page?, limit?}`(查询/筛选)或 `{query, size?}`(搜索)。
+4. **解析结果**:查询/筛选响应含 `datas`/`code_count`,条数多时用 `page` 翻页;搜索响应含 `data`(title/url/summary)。
+5. **空数据/错误**:放宽条件重试 ≤2 次;网关错误(如额度不足)如实转述;MCP 未配置或缺 key 时引导去 https://www.iwencai.com/skillhub 获取。
+6. **回答规范**:清晰展示 + 表格解析正确 + **必须注明数据来源于同花顺问财**。
 
 ## License
 
